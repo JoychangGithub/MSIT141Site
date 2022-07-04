@@ -1,0 +1,64 @@
+﻿@model MSIT141Site.Models.Member
+
+@{
+    ViewData["Title"] = "HW_Register";
+}
+
+<h1>HW_Register</h1>
+
+@*<form>*@
+<form method="post" enctype="application/x-www-form-urlencoded">
+    <div class="form-group">
+        <label for="inputName">姓名</label>
+        <input type="text" class="form-control" id="inputName" name="Name">
+        <small id="nameHelp" class="form-text text-muted"></small>
+    </div>
+    <div class="form-group">
+        <label for="inputEmail">電子郵件</label>
+        <input type="text" class="form-control" id="inputEmail" name="Email">
+    </div>
+    <div class="form-group">
+        <label for="inputAge">年齡</label>
+        <input type="text" class="form-control" id="inputAge" name="Age">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<div class="alert alert-info" id="div1"></div>
+
+@section Scripts
+{
+    <script>
+    const txtName = document.querySelector('#inputName')
+    const txtEmail = document.querySelector('#inputEmail')
+    const txtAge = document.querySelector('#inputAge')
+    const btnSubmit = document.querySelector('.btn')
+    const divInfo = document.querySelector('#div1')
+
+
+    txtName.addEventListener('blur', (evt) =>
+    {
+        console.log('submit');  //因為submit預設為傳送資料且會刷新網頁，因此console.log只會看到閃一下的畫面，解決(1)
+        evt.preventDefault();   //解決(1):參數加evt且取消submit的預設
+
+        //step1:建立XMLHttpRequest物件
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', () =>
+        {
+            console.log('load');
+
+            //step3:顯示資料
+            const data = xhr.responseText;
+            nameHelp.innerHTML = `<h3>${data}</h3>`
+        })
+
+        //step2:
+        const params = `Name=${txtName.value}&Email=${txtEmail.value}&Age=${txtAge.value}`;
+        xhr.open('POST', '@Url.Content("~/Api/checkName")');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');  //需加此使Request Headers的content-type為application/x-www-form-urlencoded 否則抓不到輸入資料(顯示預設)
+
+        xhr.send(params);
+    })
+
+    </script>
+
+}

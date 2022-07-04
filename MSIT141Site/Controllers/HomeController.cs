@@ -12,17 +12,34 @@ namespace MSIT141Site.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly DemoContext _context;   //注入
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DemoContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-
+        public IActionResult FirstAjax()
+        {
+            return View();
+        }
+        public IActionResult AjaxPost() 
+        {
+            return View();
+        }
+        public IActionResult Register()
+        {
+            return View();
+        }
+        public IActionResult HW_Register()
+        {                            
+           return View();
+        }
         public IActionResult Privacy()
         {
             return View();
