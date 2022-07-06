@@ -1,0 +1,91 @@
+﻿
+@{
+    ViewData["Title"] = "FirstAjax";
+}
+
+<h1>FirstAjax</h1>
+
+<labe>姓名</labe><input type="text" placeholder="請輸入姓名" id="inputName"/>
+<labe>年紀</labe><input type="text" placeholder="請輸入姓名" id="inputAge"/>
+
+<button type="button" class="btn btn-primary mb-3" id="buttonStart">StartAjax</button>
+<button type="button" class="btn btn-primary mb-3" id="buttonStop">StopAjax</button>
+<div id="div1" class="alert alert-secondary"></div>
+
+@section Scripts
+{
+    <script>
+        const btnStart = document.querySelector('#buttonStart');
+        const btnStop = document.querySelector('#buttonStop');
+        const divInfo = document.querySelector('#div1');
+        const txtName = document.querySelector('#inputName');
+        const txtAge = document.querySelector('#inputAge');
+
+        //步驟1:建立Ajax物件
+        const xhr = new XMLHttpRequest();
+
+        btnStop.addEventListener('click', () =>
+        {
+            xhr.abort();
+        })
+
+        btnStart.addEventListener('click', () =>
+        {
+            
+
+            //步驟2:對伺服器端發出要求(Request)
+            /*xhr.open("GET", "/Api/Index");*/
+           /*xhr.open("GET", "/Api/Index?name=May&age=25");*/
+
+            //路徑寫法1:
+            //xhr.open("GET", `/Api/Index?name=${txtName.value}&age=${txtAge.value}`);
+
+            //路徑寫法2:在razor語法找根目錄用"~/"，但是在此找根目錄要用"/"，因此需透過轉換
+            const url = "@Url.Content("~/api/index")";
+            const params = `?name=${txtName.value}&age=${txtAge.value}`;
+            xhr.open("GET", url + params);
+            xhr.timeout = 7000;
+            xhr.send();
+
+
+            
+            //步驟3:接收資料
+            xhr.addEventListener("loadstart", () =>   //"load"為callback方法
+            {
+                console.log('loadstart');
+                btnStart.setAttribute('disabled', 'disabled');
+                btnStart.textContent = "Loading...";
+
+            })
+            xhr.addEventListener("load", () =>   //"load"為callback方法
+            {
+                const data = xhr.responseText;
+
+                //顯示資料
+                divInfo.innerHTML = `<h2>${data}</h2>`;
+
+            })
+            xhr.addEventListener("loadend", () =>   //"load"為callback方法
+            {
+                console.log('loadend');
+                btnStart.removeAttribute('disable');
+                btnStart.textContent = "StartAjax";
+
+            })
+            xhr.addEventListener('timeout', () => {
+                console.log("abort");
+                divInfo.innerHTML = "<h3>伺服器忙碌中，請稍後再來</h3>"
+            })
+            xhr.addEventListener('abort', () =>
+            {
+                console.log("abort");
+                divInfo.innerHTML="<h3>你終止了程式的執行</h3>"
+            })
+
+            //步驟2:對伺服器端發出要求(Request) 此步驟可放於步驟3下方
+            //xhr.open("GET", "/Api/Index");
+            //xhr.send();
+        })
+    </script>
+}
+
